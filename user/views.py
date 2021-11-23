@@ -42,14 +42,14 @@ class GuestDetail(APIView):
         guest = self.get_object(pk)
         print(guest.username)
         if not (self.request.user.id == guest.id or self.request.user.is_staff):
-            return Response('Unauthorized', status=status.HTTP_401_UNAUTHORIZED)
+            return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
         serializer = GuestSingleSerializer(guest)
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
         guest = self.get_object(pk)
         if not (self.request.user.id == guest.id or self.request.user.is_staff):
-            return Response('Unauthorized', status=status.HTTP_401_UNAUTHORIZED)
+            return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
         serializer = GuestSingleSerializer(guest, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -58,7 +58,7 @@ class GuestDetail(APIView):
     
     def delete(self, request, pk, format=None):
         if not self.request.user.is_staff:
-            return Response('Unauthorized', status=status.HTTP_401_UNAUTHORIZED)
+            return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
         guest = self.get_object(pk)
         guest.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -98,14 +98,14 @@ class SecurityDetail(APIView):
         security = self.get_object(pk)
         print(security.username)
         if not (self.request.user.id == security.id or self.request.user.is_staff):
-            return Response('Unauthorized', status=status.HTTP_401_UNAUTHORIZED)
+            return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
         serializer = SecuritySingleSerializer(security)
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
         security = self.get_object(pk)
         if not (self.request.user.id == security.id or self.request.user.is_staff):
-            return Response('Unauthorized', status=status.HTTP_401_UNAUTHORIZED)
+            return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
         serializer = SecuritySingleSerializer(security, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -114,7 +114,7 @@ class SecurityDetail(APIView):
     
     def delete(self, request, pk, format=None):
         if not self.request.user.is_staff:
-            return Response('Unauthorized', status=status.HTTP_401_UNAUTHORIZED)
+            return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
         security = self.get_object(pk)
         security.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

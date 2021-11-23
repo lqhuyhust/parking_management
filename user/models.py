@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from car_park.models import Port
+from car_park.models import Port, CarPark
 
 ROLES = [
     ('Admin', 'Admin'),
@@ -20,6 +20,7 @@ class Guest(User):
 
 class Security(User):
     port = models.ForeignKey(Port, on_delete=models.DO_NOTHING, null=False)
+    car_park = models.ForeignKey(CarPark, on_delete=models.CASCADE, null=False)
 
 class UserRole(models.Model):
     user = models.OneToOneField(User, related_name='role', on_delete=models.CASCADE, unique=True)

@@ -8,6 +8,10 @@ ROLES = [
     ('Student', 'Student')
 ]
 # Create your models here.
+class GuestType(models.Model):
+    name = models.CharField(max_length=15, null=False)
+    fee = models.DecimalField(max_digits=7, decimal_places= 7, default=0)
+    
 class Guest(User):
     guest_type = models.ForeignKey(GuestType, on_delete=models.CASCADE, related_name="guest_type")
     license_plate = models.CharField(max_length=20, null=False)
@@ -16,10 +20,6 @@ class Guest(User):
 
 class Security(User):
     port = models.ForeignKey(Port, on_delete=models.DO_NOTHING, null=False)
-
-class GuestType(models.Model):
-    name = models.CharField(max_length=15, null=False)
-    fee = models.DecimalField(min=0)
 
 class UserRole(models.Model):
     user = models.OneToOneField(User, related_name='role', on_delete=models.CASCADE, unique=True)

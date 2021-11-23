@@ -8,5 +8,5 @@ class Parking(models.Model):
     parking_slot = models.ForeignKey(ParkingSlot, on_delete=models.CASCADE, null=False)
     time_start = models.DateTimeField(null=True)
     time_end = models.DateTimeField(null=True)
-    fee = models.DecimalField(default=0)
-    extra_fee = models.DecimalField(default=0)
+    fee = models.DecimalField(max_digits=7, decimal_places= 7, default=0)
+    extra_fee = models.DecimalField(max_digits=7, decimal_places= 7, default=0)

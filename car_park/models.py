@@ -8,14 +8,14 @@ class CarPark(models.Model):
     latitude = models.FloatField(null=False) 
 
     def __str__(self):
-        return '%d' % (self.name)
+        return self.name
 
 class Port(models.Model):
     name = models.CharField(max_length=50, null=False)
     car_park = models.ForeignKey(CarPark, on_delete=models.CASCADE, null=False)
 
     def __str__(self):
-        return '%d' % (self.name)
+        return self.name
 
 class ParkingSlot(models.Model):
     name = models.CharField(max_length=50, null=False)
@@ -23,4 +23,4 @@ class ParkingSlot(models.Model):
     available = models.BooleanField(default=True)
 
     def __str__(self):
-        return '%d' % (self.name)
+        return self.name

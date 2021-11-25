@@ -20,7 +20,7 @@ class Guest(User):
 
 class Security(User):
     port = models.ForeignKey(Port, on_delete=models.DO_NOTHING, null=False)
-    car_park = models.ForeignKey(CarPark, on_delete=models.CASCADE, null=False)
+    car_park = models.ForeignKey(CarPark, on_delete=models.CASCADE, null=False, default='')
 
 class UserRole(models.Model):
     user = models.OneToOneField(User, related_name='role', on_delete=models.CASCADE, unique=True)

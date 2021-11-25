@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 # Create your views here.
 class CarList(APIView):
     def get(self, request, *args, **kwargs):
-        if self.request.user.is_staff:
+        if self.request.user.is_superuser:
             cars = Car.objects.all()
         elif self.request.user.role.role == 'Guest':
             cars = Car.objects.get(user=self.request.user.id)
@@ -19,7 +19,7 @@ class CarList(APIView):
         return Response(serializer.data)
     
     def post(self, request, *args, **kwargs):
-        if not (self.request.user.role.role == 'Guest' or self.request.user.is_staff):
+        if not (self.request.user.role.role == 'Guest' or self.request.user.is_superuser):
             return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
         serializer = CarSerializer(data=request.data)
         if serializer.is_valid():
@@ -41,7 +41,7 @@ class CarDetail(APIView):
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk')
         car = self.get_object(pk)
-        if not (self.request.user.id == car.guest.id or self.request.user.is_staff):
+        if not (self.request.user.id == car.guest.id or self.request.user.is_superuser):
             return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
         serializer = CarSingleSerializer(car)
         return Response(serializer.data)
@@ -49,7 +49,7 @@ class CarDetail(APIView):
     def put(self, request, *args, **kwargs):
         pk = kwargs.get('pk')
         car = self.get_object(pk)
-        if not (self.request.user.id == car.guest.id or self.request.user.is_staff):
+        if not (self.request.user.id == car.guest.id or self.request.user.is_superuser):
             return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
         serializer = CarSingleSerializer(car, data=request.data)
         if serializer.is_valid():
@@ -59,7 +59,7 @@ class CarDetail(APIView):
     
     def delete(self, request, *args, **kwargs):
         pk = kwargs.get('pk')
-        if not self.request.user.is_staff:
+        if not self.request.user.is_superuser:
             return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
         car = self.get_object(pk)
         car.delete()

@@ -26,8 +26,7 @@ SECRET_KEY = 'django-insecure-gr$zmh)md#08*7)-ekg+$u(^x36lvy=s+8-2yx32@6f1a@@8rr
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost',
-'127.0.0.1']
+ALLOWED_HOSTS = ['*',]
 
 
 # Application definition
@@ -39,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'whitenoise.runserver_nostatic',
     'core.apps.CoreConfig',
     'car.apps.CarConfig',
     'car_park.apps.CarParkConfig',
@@ -99,14 +98,21 @@ WSGI_APPLICATION = 'parking_management.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'djongo',
+#         'NAME': 'parking_management',
+#         'ENFORCE_SCHEMA': False,
+#         'CLIENT': {
+#             'host': 'mongodb+srv://huylq73:Huy1234@cluster0.7uzse.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+#         }  
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
-        'NAME': 'parking_management',
-        'ENFORCE_SCHEMA': False,
-        'CLIENT': {
-            'host': 'mongodb+srv://huylq73:Huy1234@cluster0.7uzse.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
-        }  
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 

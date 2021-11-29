@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    
     'core.apps.CoreConfig',
     'car.apps.CarConfig',
     'car_park.apps.CarParkConfig',
@@ -99,18 +99,23 @@ WSGI_APPLICATION = 'parking_management.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'djongo',
+#         'NAME': 'parking_management',
+#         'ENFORCE_SCHEMA': False,
+#         'CLIENT': {
+#             'host': 'mongodb+srv://huylq73:Huy1234@cluster0.7uzse.mongodb.net/parking_management?retryWrites=true&w=majority'
+#         }  
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
-        'NAME': 'parking_management',
-        'ENFORCE_SCHEMA': False,
-        'CLIENT': {
-            'host': 'mongodb+srv://huylq73:Huy1234@cluster0.7uzse.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
-        }  
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 

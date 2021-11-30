@@ -1,11 +1,11 @@
 from rest_framework import generics
 from .models import CarPark, ParkingSlot, Port
 from .serializers import CarParkSerializer, CarParkSingleSerializer, ParkingSlotSerializer, ParkingSlotSingleSerializer, PortSerializer, PortSingleSerializer
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, AllowAny
 
 # Create your views here.
 class CarParkList(generics.ListCreateAPIView):
-    permission_classes = (IsAdminUser, )
+    permission_classes = (AllowAny, )
     queryset = CarPark.objects.all()
     serializer_class = CarParkSerializer
 

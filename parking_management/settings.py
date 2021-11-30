@@ -26,9 +26,12 @@ SECRET_KEY = 'django-insecure-gr$zmh)md#08*7)-ekg+$u(^x36lvy=s+8-2yx32@6f1a@@8rr
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost',
-'127.0.0.1']
+# CORS conf
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:3000',
+)
 
+ALLOWED_HOSTS = ['.localhost', '127.0.0.1']
 
 # Application definition
 
@@ -39,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'corsheaders',
+    'whitenoise.runserver_nostatic',
     'core.apps.CoreConfig',
     'car.apps.CarConfig',
     'car_park.apps.CarParkConfig',
@@ -52,6 +56,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

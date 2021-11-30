@@ -1,8 +1,0 @@
-.venv/
-# Byte-compiled / optimized / DLL files
-*.log
-*.pot
-*.pyc
-car/__pycache__/
-db.sqlite3
-media

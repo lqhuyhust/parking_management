@@ -19,7 +19,8 @@ class AuthLoginWithJWT(ObtainJSONWebToken):
             response_data = {
                 'token': token,
                 'is_superuser': user.is_superuser,
-                'is_staff': user.is_staff
+                'is_staff': user.is_staff,
+                'username': user.username
             }
             response = Response(response_data)
             if api_settings.JWT_AUTH_COOKIE:
@@ -41,7 +42,7 @@ class ChangePassword(generics.UpdateAPIView):
 
     def get_object(self, pk):
         try:
-            return User.objects.get(pk=pk)
+            return User.objects.get(username=pk)
         except User.DoesNotExist:
             return Response('Not found', status=status.HTTP_404_NOT_FOUND)
 

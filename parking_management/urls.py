@@ -17,10 +17,10 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/auth/', include('core.urls')),
-    path('api/cars/', include('car.urls')),
-    path('api/car-parks/', include('car_park.urls')),
-    path('api/parkings/', include('parking.urls')),
-    path('api/users/', include('user.urls')),
+    path('admin', admin.site.urls),
+    path('api/auth', include('core.urls')),
+    path('api/cars', include('car.urls')),
+    path('api/car-parks', include('car_park.urls')),
+    path('api/parkings', include('parking.urls')),
+    path('api/users', include('user.urls')),
 ]

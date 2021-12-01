@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Parking
+from .models import Parking, Payment
 
 class ParkingSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,3 +14,8 @@ class ParkingSingleSerializer(serializers.ModelSerializer):
     
     car_park = serializers.StringRelatedField(required=False)
     parking_slot = serializers.StringRelatedField(required=False)
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = ('user', 'car_park', 'parking_slot', 'type', 'fee', )

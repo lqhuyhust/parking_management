@@ -18,6 +18,7 @@ class Port(models.Model):
         return self.name
 
 class ParkingSlot(models.Model):
+    slot_id = models.CharField(max_length=5, default='')
     name = models.CharField(max_length=50, null=False)
     car_park = models.ForeignKey(CarPark, on_delete=models.CASCADE, null=False)
     available = models.BooleanField(default=True)

@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.response import Response
 from .models import CarPark, ParkingSlot, Port
 from .serializers import CarParkSerializer, CarParkSingleSerializer, ParkingSlotSerializer, ParkingSlotSingleSerializer, PortSerializer, PortSingleSerializer
@@ -41,13 +41,29 @@ class SearchCarPark(APIView):
     def get(self, request, *args, **kwargs):
         longitude = kwargs.get('long')
         latitude = kwargs.get('lat')
-        target = ("{:.6f}".format(float(longitude)), "{:.6f}".format(float(latitude)))
+        target = (float(longitude), float(latitude))
     
         car_parks = CarPark.objects.all()
         serializer = CarParkSerializer(car_parks, many=True)
         for car_park in serializer.data:
-            print(("{:.6f}".format(float(car_park['longitude'])), "{:.6f}".format(float(car_park['latitude']))))
-            coordinate = ("{:.6f}".format(float(car_park['longitude'])) + ',' + "{:.6f}".format(float(car_park['latitude'])))
+            print((float(car_park['longitude']), float(car_park['latitude'])))
+            coordinate = (float(car_park['longitude']) + ',' + float(car_park['latitude']))
             car_park['distance'] = geodesic(target,coordinate).km
         print(serializer.data)
         Response(serializer.data)     
+
+class FollowCarPark(APIView):
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        try:
+            car_park = CarPark.objects.get(pk=pk)
+        except CarPark.DoesNotExist:
+            return Response('Car Park Not Found', status=status.HTTP_404_NOT_FOUND)
+        num = car_park.available.count()
+
+        data = {
+            car_park: car_park.name, 
+            message: "Update: Number of available parking slot is " + num
+        }
+        return Response(data, status=status.HTTP_200_OK)
+

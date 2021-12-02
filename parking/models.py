@@ -1,6 +1,7 @@
 from django.db import models
 from user.models import Guest
 from car_park.models import CarPark, ParkingSlot 
+from car.models import Car
 # Create your models here.
 PAYMENT_TYPES = [
     ('Booking', 'Booking'),
@@ -8,6 +9,7 @@ PAYMENT_TYPES = [
 ]
 class Parking(models.Model):
     user = models.ForeignKey(Guest, on_delete=models.CASCADE, null=False)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, null=False, default=1)
     car_park = models.ForeignKey(CarPark, on_delete=models.CASCADE, null=False)
     parking_slot = models.ForeignKey(ParkingSlot, on_delete=models.CASCADE, null=False)
     estimate_end_time = models.DateTimeField(null=True)

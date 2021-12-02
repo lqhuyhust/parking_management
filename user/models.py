@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from car_park.models import Port, CarPark
+from django.utils.safestring import mark_safe
 
 # Create your models here.
 class GuestType(models.Model):
@@ -8,10 +9,17 @@ class GuestType(models.Model):
     fee = models.DecimalField(max_digits=7, decimal_places= 7, default=0)
     
 class Guest(User):
-    guest_type = models.ForeignKey(GuestType, on_delete=models.CASCADE, related_name="guest_type")
-    license_plate = models.CharField(max_length=20, null=False)
-    expired_date = models.DateField(null=False)
+
+    guest_type = models.ForeignKey(GuestType, on_delete=models.CASCADE, related_name="guest_type", default=1)
+    expired_date = models.DateField(null=True)
     date_of_birth = models.DateField(null=True)
+    license_plate = models.ImageField(upload_to='licenses',null=False)
+
+    @property
+    def thumbnail_license(self):
+        if self.license_plate:
+            return mark_safe('<img src="{}" />'.format(self.license_plate.url))
+        return ""
 
 class Security(User):
     port = models.ForeignKey(Port, on_delete=models.DO_NOTHING, null=False)

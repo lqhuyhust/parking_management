@@ -3,15 +3,17 @@ from .serializers import GuestSerializer, GuestSingleSerializer, SecuritySeriali
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, AllowAny
 from django.contrib.auth.hashers import make_password
 # Create your views here.
 class GuestList(APIView):
     """
     Just admin has permission to get all guest list and create new guest
     """
-    permission_classes = (IsAdminUser, )
+    permission_classes = (AllowAny, )
     def get(self, request, format=None):
+        if not (self.request.user.is_superuser):
+            return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
         guests = Guest.objects.all()
         serializer = GuestSerializer(guests, many=True)
         return Response(serializer.data)
@@ -20,7 +22,7 @@ class GuestList(APIView):
         serializer = GuestSerializer(data=request.data)
         if serializer.is_valid():
             password = make_password(self.request.data['password'])
-            serializer.save(password=password)
+            serializer.save(password=password, is_active=False)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

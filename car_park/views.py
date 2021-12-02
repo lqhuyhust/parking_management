@@ -93,6 +93,7 @@ class BookCarPark(APIView):
             return Response('There is no available parkign slot!', status=status.HTTP_404_NOT_FOUND)
         data = {
             "user": request.user.id,
+            "car": request.data['car'],
             "car_park": car_park.id,
             "parking_slot": available[0].id,
             "estimate_end_time": request.data['estimate_end_time'],
@@ -103,7 +104,3 @@ class BookCarPark(APIView):
             parking_serializer.save()
             return Response(parking_serializer.data, status=status.HTTP_201_CREATED)
         return Response(parking_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-
-
-

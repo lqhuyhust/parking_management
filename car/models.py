@@ -8,3 +8,6 @@ class Car(models.Model):
     color = models.CharField(max_length=20, null=False)
     car_registration = models.CharField(max_length=20, null=False)
     guest = models.ForeignKey(Guest, on_delete=models.CASCADE, related_name='car', null=False)
+
+    def __str__(self):
+        return self.name

@@ -8,6 +8,4 @@ urlpatterns = [
     path('securities/<int:pk>', views.SecurityDetail.as_view()),
     path('guest-types', views.GuestTypeList.as_view()),
     path('guest-types/<int:pk>', views.GuestTypeDetail.as_view()),
-    path('user-roles', views.UserRoleList.as_view()),
-    path('user-roles/<int:pk>', views.UserRoleDetail.as_view()),
 ]

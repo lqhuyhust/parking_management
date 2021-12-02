@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 import car_park
-from .models import Guest, GuestType, Security, UserRole
+from .models import Guest, GuestType, Security
 
 class GuestSerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,11 +30,6 @@ class SecuritySingleSerializer(serializers.ModelSerializer):
     
     car_park = serializers.StringRelatedField(required=False)
     port = serializers.StringRelatedField(required=False)
-
-class UserRoleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserRole
-        fields = ('user', 'role', )
 
 class GuestTypeSerializer(serializers.ModelSerializer):
     class Meta:

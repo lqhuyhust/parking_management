@@ -2,11 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from car_park.models import Port, CarPark
 
-ROLES = [
-    ('Admin', 'Admin'),
-    ('Teacher', 'Teacher'),
-    ('Student', 'Student')
-]
 # Create your models here.
 class GuestType(models.Model):
     name = models.CharField(max_length=15, null=False)
@@ -21,7 +16,3 @@ class Guest(User):
 class Security(User):
     port = models.ForeignKey(Port, on_delete=models.DO_NOTHING, null=False)
     car_park = models.ForeignKey(CarPark, on_delete=models.CASCADE, null=False, default='')
-
-class UserRole(models.Model):
-    user = models.OneToOneField(User, related_name='role', on_delete=models.CASCADE, unique=True)
-    role = models.CharField(choices=ROLES, default='Admin', max_length=20)

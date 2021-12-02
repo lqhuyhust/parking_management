@@ -17,4 +17,6 @@ class CarAdmin(admin.ModelAdmin):
     thumbnail_image.short_description = 'Car Image'
     thumbnail_image.allow_tags = True
 
+    search_fields = ('name', 'guest', )
+
 admin.site.register(Car, CarAdmin)

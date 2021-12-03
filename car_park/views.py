@@ -90,10 +90,10 @@ class BookCarPark(APIView):
 
         pk = kwargs.get('pk')
         car_park = self.get_car_park(pk)
-        try:
-            available = ParkingSlot.objects.filter(car_park_id=car_park.id, available=True)
-        except ParkingSlot.DoesNotExist:
-            return Response('There is no available parkign slot!', status=status.HTTP_404_NOT_FOUND)
+        
+        available = ParkingSlot.objects.filter(car_park_id=car_park.id, available=True)
+        if len(available) == 0:
+            return Response('There is no available parking slot!', status=status.HTTP_404_NOT_FOUND)
         data = {
             "user": request.user.id,
             "car": request.data['car'],

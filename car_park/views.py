@@ -2,19 +2,22 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from .models import CarPark, ParkingSlot, Port
 from .serializers import CarParkSerializer, CarParkSingleSerializer, ParkingSlotSerializer, ParkingSlotSingleSerializer, PortSerializer, PortSingleSerializer
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.views import APIView
 from geopy.distance import geodesic
 from parking.models import Parking, Payment
 from parking.serializers import ParkingSerializer
-from operator import itemgetter
 
 # Create your views here.
-class CarParkList(generics.ListCreateAPIView):
+class CarParkList(generics.CreateAPIView):
     permission_classes = (IsAdminUser, )
     queryset = CarPark.objects.all()
     serializer_class = CarParkSerializer
 
+class CarParkList(generics.ListAPIView):
+    permission_classes = (AllowAny, )
+    queryset = CarPark.objects.all()
+    serializer_class = CarParkSerializer
 class CarParkDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAdminUser, )
     queryset = CarPark.objects.all()
@@ -42,7 +45,6 @@ class PortDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class SearchCarPark(APIView):
     def get(self, request, *args, **kwargs):
-        print(self.request.query_params)
         longitude = self.request.query_params.get('long')
         latitude = self.request.query_params.get('lat')
         target = (float(longitude), float(latitude))

@@ -2,19 +2,22 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from .models import CarPark, ParkingSlot, Port
 from .serializers import CarParkSerializer, CarParkSingleSerializer, ParkingSlotSerializer, ParkingSlotSingleSerializer, PortSerializer, PortSingleSerializer
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.views import APIView
 from geopy.distance import geodesic
 from parking.models import Parking, Payment
 from parking.serializers import ParkingSerializer
-from operator import itemgetter
 
 # Create your views here.
-class CarParkList(generics.ListCreateAPIView):
+class CarParkCreate(generics.CreateAPIView):
     permission_classes = (IsAdminUser, )
     queryset = CarPark.objects.all()
     serializer_class = CarParkSerializer
 
+class CarParkList(generics.ListAPIView):
+    permission_classes = (AllowAny, )
+    queryset = CarPark.objects.all()
+    serializer_class = CarParkSerializer
 class CarParkDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAdminUser, )
     queryset = CarPark.objects.all()
@@ -42,8 +45,8 @@ class PortDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class SearchCarPark(APIView):
     def get(self, request, *args, **kwargs):
-        longitude = kwargs.get('long')
-        latitude = kwargs.get('lat')
+        longitude = self.request.query_params.get('long')
+        latitude = self.request.query_params.get('lat')
         target = (float(longitude), float(latitude))
         car_parks = CarPark.objects.all()
         serializer = CarParkSerializer(car_parks, many=True)
@@ -87,23 +90,25 @@ class BookCarPark(APIView):
 
         pk = kwargs.get('pk')
         car_park = self.get_car_park(pk)
-        try:
-            available = ParkingSlot.objects.filter(car_park_id=car_park.id, available=True)
-        except ParkingSlot.DoesNotExist:
-            return Response('There is no available parkign slot!', status=status.HTTP_404_NOT_FOUND)
+
         data = {
-            "user_id": request.user.id,
-            "car_park_id": car_park.id,
-            "parking_slot_id": available[0].id,
+            "user": request.user.id,
+            "car": request.data['car'],
+            "car_park": car_park.id,
             "estimate_end_time": request.data['estimate_end_time'],
             "fee": request.data['fee']
         }
+        
+        available = ParkingSlot.objects.filter(car_park_id=car_park.id, available=True)
+        if len(available) == 0:
+            return Response('There is no available parking slot!', status=status.HTTP_404_NOT_FOUND)
+        else:
+            data['parking_slot'] = available[0].id
         parking_serializer = ParkingSerializer(data=data)
         if parking_serializer.is_valid():
             parking_serializer.save()
+            slot = Parking.objects.get(pk=available[0].id)
+            slot.available = False
+            slot.save()
             return Response(parking_serializer.data, status=status.HTTP_201_CREATED)
         return Response(parking_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-
-
-

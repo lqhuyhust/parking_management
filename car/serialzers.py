@@ -4,12 +4,12 @@ from .models import Car
 class CarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
-        fields = ('brand', 'name', 'color', 'car_registration', 'guest')
+        fields = ('brand', 'name', 'color', 'car_registration', 'guest', 'license_plate', 'image')
 
 class CarSingleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
-        fields = ('brand', 'name', 'color', 'car_registration', 'guest')
+        fields = ('brand', 'name', 'color', 'car_registration', 'guest', 'license_plate', 'image')
     
     brand = serializers.CharField(max_length=20, required=False)
     name = serializers.CharField(max_length=20, required=False)

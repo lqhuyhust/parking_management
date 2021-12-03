@@ -5,10 +5,21 @@ class CarPark(models.Model):
     name = models.CharField(max_length=50, null=False)
     location = models.CharField(max_length=100, null=False)
     longitude = models.FloatField(null=False)
-    latitude = models.FloatField(null=False) 
+    latitude = models.FloatField(null=False)
 
     def __str__(self):
         return self.name
+
+    @property
+    def available(self):
+        result = []
+        for slot in ParkingSlot.objects.filter(car_park_id=self.id):
+            result.append(slot.name)
+        return result
+    
+    @property
+    def available_number(self):
+        return len(self.available)
 
 class Port(models.Model):
     name = models.CharField(max_length=50, null=False)

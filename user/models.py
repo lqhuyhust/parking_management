@@ -15,12 +15,12 @@ class Guest(User):
     guest_type = models.ForeignKey(GuestType, on_delete=models.CASCADE, related_name="guest_type", default=1)
     expired_date = models.DateField(null=True)
     date_of_birth = models.DateField(null=True)
-    license_plate = models.ImageField(upload_to='licenses',null=False)
+    license = models.ImageField(upload_to='licenses', null=True)
 
     @property
     def thumbnail_license(self):
-        if self.license_plate:
-            return mark_safe('<img src="{}" />'.format(self.license_plate.url))
+        if self.license:
+            return mark_safe('<img src="{}" />'.format(self.license.url))
         return ""
 
 class Security(User):

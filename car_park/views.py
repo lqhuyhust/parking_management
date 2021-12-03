@@ -90,20 +90,25 @@ class BookCarPark(APIView):
 
         pk = kwargs.get('pk')
         car_park = self.get_car_park(pk)
-        
-        available = ParkingSlot.objects.filter(car_park_id=car_park.id, available=True)
-        if len(available) == 0:
-            return Response('There is no available parking slot!', status=status.HTTP_404_NOT_FOUND)
+
         data = {
             "user": request.user.id,
             "car": request.data['car'],
             "car_park": car_park.id,
-            "parking_slot": available[0].id,
             "estimate_end_time": request.data['estimate_end_time'],
             "fee": request.data['fee']
         }
+        
+        available = ParkingSlot.objects.filter(car_park_id=car_park.id, available=True)
+        if len(available) == 0:
+            return Response('There is no available parking slot!', status=status.HTTP_404_NOT_FOUND)
+        else:
+            data['parking_slot'] = available[0].id
         parking_serializer = ParkingSerializer(data=data)
         if parking_serializer.is_valid():
             parking_serializer.save()
+            slot = Parking.objects.get(pk=available[0].id)
+            slot.available = False
+            slot.save()
             return Response(parking_serializer.data, status=status.HTTP_201_CREATED)
         return Response(parking_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

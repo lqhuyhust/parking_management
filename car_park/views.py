@@ -78,7 +78,11 @@ class BookCarPark(APIView):
             return Response('Car Park Not Found', status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request, *args, **kwargs):
-        if Parking.objects.get(user_id=request.user.id, done=False):
+        try:
+            parking = Parking.objects.get(user_id=request.user.id, done=False)
+        except Parking.DoesNotExist:
+            pass
+        else:
             return Response('You have to take only 1 car at same time', status=status.HTTP_400_BAD_REQUEST)
 
         pk = kwargs.get('pk')

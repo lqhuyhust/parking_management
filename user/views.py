@@ -40,14 +40,15 @@ class GuestDetail(APIView):
     Guest can get their own information and update it
     Admin has permission to get, update or delete a guest
     """
-    def get_object(self, pk):
+    def get_object(self, username):
         try:
-            return Guest.objects.get(pk=pk)
+            return Guest.objects.get(username=username)
         except Guest.DoesNotExist:
             return Response('Not found', status=status.HTTP_404_NOT_FOUND)
 
-    def put(self, request, pk, format=None):
-        guest = self.get_object(pk)
+    def put(self, request, *args, **kwargs):
+        username = kwargs.get('username')
+        guest = self.get_object(username)
         if not (self.request.user.id == guest.id or self.request.user.is_superuser):
             return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
         serializer = GuestSingleSerializer(guest, data=request.data)
@@ -56,10 +57,11 @@ class GuestDetail(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    def delete(self, request, pk, format=None):
+    def delete(self, request, *args, **kwargs):
+        username = kwargs.get('username')
         if not self.request.user.is_superuser:
             return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
-        guest = self.get_object(pk)
+        guest = self.get_object(username)
         guest.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

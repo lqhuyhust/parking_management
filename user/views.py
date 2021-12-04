@@ -49,7 +49,9 @@ class GuestDetail(APIView):
     def put(self, request, *args, **kwargs):
         username = kwargs.get('username')
         guest = self.get_object(username)
-        if not (self.request.user.id == guest.id or self.request.user.is_superuser):
+        print(request.user)
+        print(guest.id)
+        if not (request.user.id == guest.id or request.user.is_superuser):
             return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
         serializer = GuestSingleSerializer(guest, data=request.data)
         if serializer.is_valid():

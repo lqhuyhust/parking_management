@@ -44,6 +44,7 @@ class PortDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PortSingleSerializer
 
 class SearchCarPark(APIView):
+    permission_classes = (AllowAny, )
     def get(self, request, *args, **kwargs):
         longitude = self.request.query_params.get('long')
         latitude = self.request.query_params.get('lat')

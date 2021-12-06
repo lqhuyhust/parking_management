@@ -3,30 +3,11 @@ from .serializers import GuestSerializer, GuestSingleSerializer, SecuritySeriali
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics
-from rest_framework.permissions import IsAdminUser, AllowAny
+from rest_framework.permissions import IsAdminUser, AllowAny, IsAuthenticated
 from django.contrib.auth.hashers import make_password
 # Create your views here.
-class GuestList(APIView):
-    """
-    Just admin has permission to get all guest list and create new guest
-    """
+class Register(APIView):
     permission_classes = (AllowAny, )
-    def get(self, request, format=None):
-        if self.request.user.is_superuser:
-            guests = Guest.objects.all()
-            serializer = GuestSerializer(guests, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        elif not request.user.is_staff:
-            try:
-                guest = Guest.objects.get(pk=request.user.id)
-            except Guest.DoesNotExist:
-                return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
-            serializer = GuestSingleSerializer(guest)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
-        
-
     def post(self, request, format=None):
         serializer = GuestSerializer(data=request.data)
         if serializer.is_valid():
@@ -34,23 +15,25 @@ class GuestList(APIView):
             serializer.save(password=password, is_active=False)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 class GuestDetail(APIView):
-    """
-    Guest can get their own information and update it
-    Admin has permission to get, update or delete a guest
-    """
     def get_object(self, username):
         try:
             return Guest.objects.get(username=username)
         except Guest.DoesNotExist:
             return Response('Not found', status=status.HTTP_404_NOT_FOUND)
 
+    def get(self, request, *args, **kwargs):
+        print(request.user)
+        username = kwargs.get('username')
+        guest = self.get_object(username)
+        if request.user.id == guest.id or request.user.is_superuser:
+            serializer = GuestSingleSerializer(guest)
+            return Response(serializer.data)
+        return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
+
     def put(self, request, *args, **kwargs):
         username = kwargs.get('username')
         guest = self.get_object(username)
-        print(request.user)
-        print(guest.id)
         if not (request.user.id == guest.id or request.user.is_superuser):
             return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
         serializer = GuestSingleSerializer(guest, data=request.data)
@@ -68,9 +51,6 @@ class GuestDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class SecurityList(APIView):
-    """
-    Just admin has permission to get all security list and create new security
-    """
     permission_classes = (IsAdminUser, )
     def get(self, request, format=None):
         securities = Security.objects.all()
@@ -86,10 +66,6 @@ class SecurityList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class SecurityDetail(APIView):
-    """
-    Security can get their own information and update it
-    Admin has permission to get, update or delete a security
-    """
     def get_object(self, pk):
         try:
             return Security.objects.get(pk=pk)
@@ -122,18 +98,12 @@ class SecurityDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class GuestTypeList(generics.ListCreateAPIView):
-    """
-    Just admin has permission to get all guest type list and create new guest type
-    """
     permission_classes = (IsAdminUser, )
     queryset = GuestType.objects.all()
     serializer_class = GuestTypeSerializer
 
 
 class GuestTypeDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Just admin has permission to get, update or delete a guest type
-    """
     permission_classes = (IsAdminUser, )
     queryset = GuestType.objects.all()
     serializer_class = GuestTypeSerializer

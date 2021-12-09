@@ -16,6 +16,7 @@ class Register(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class GuestDetail(APIView):
+    permission_classes = (AllowAny, )
     def get_object(self, username):
         try:
             return Guest.objects.get(username=username)
@@ -26,16 +27,18 @@ class GuestDetail(APIView):
         print(request.user)
         username = kwargs.get('username')
         guest = self.get_object(username)
-        if request.user.id == guest.id or request.user.is_superuser:
-            serializer = GuestSingleSerializer(guest)
-            return Response(serializer.data)
-        return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
+        # if request.user.id == guest.id or request.user.is_superuser:
+        #     serializer = GuestSingleSerializer(guest)
+        #     return Response(serializer.data)
+        # return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
+        serializer = GuestSingleSerializer(guest)
+        return Response(serializer.data)
 
     def put(self, request, *args, **kwargs):
         username = kwargs.get('username')
         guest = self.get_object(username)
-        if not (request.user.id == guest.id or request.user.is_superuser):
-            return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
+        # if not (request.user.id == guest.id or request.user.is_superuser):
+        #     return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
         serializer = GuestSingleSerializer(guest, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -44,8 +47,8 @@ class GuestDetail(APIView):
     
     def delete(self, request, *args, **kwargs):
         username = kwargs.get('username')
-        if not self.request.user.is_superuser:
-            return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
+        # if not self.request.user.is_superuser:
+        #     return Response('Unauthorized', status=status.HTTP_403_FORBIDDEN)
         guest = self.get_object(username)
         guest.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

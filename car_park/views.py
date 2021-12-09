@@ -59,21 +59,6 @@ class SearchCarPark(APIView):
                 result.append(car_park)
         return Response(result, status=status.HTTP_200_OK)     
 
-class FollowCarPark(APIView):
-    def get(self, request, *args, **kwargs):
-        pk = kwargs.get('pk')
-        try:
-            car_park = CarPark.objects.get(pk=pk)
-        except CarPark.DoesNotExist:
-            return Response('Car Park Not Found', status=status.HTTP_404_NOT_FOUND)
-        num = ParkingSlot.objects.filter(car_park_id=car_park.id, available=True).count()
-
-        data = {
-            "car_park" : car_park.name, 
-            "message": "Update: Number of available parking slot is " + str(num)
-        }
-        return Response(data, status=status.HTTP_200_OK)
-
 class BookCarPark(APIView):
     def get_car_park(self, pk):
         try:

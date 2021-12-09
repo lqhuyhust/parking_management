@@ -7,7 +7,7 @@ class Car(models.Model):
     def __str__(self):
         return self.name
 
-    guest = models.ForeignKey(Guest, on_delete=models.CASCADE, related_name='car', null=False)
+    guest = models.OneToOneField(Guest, on_delete=models.CASCADE, related_name='car', null=False)
     name = models.CharField(max_length=20, null=False)
     brand = models.CharField(max_length=20, null=False)
     license_plate = models.CharField(max_length=20, null=False, default='')

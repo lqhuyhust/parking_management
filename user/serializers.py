@@ -11,7 +11,7 @@ class GuestSerializer(serializers.ModelSerializer):
 class GuestSingleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Guest
-        fields = ('id', 'username', 'first_name', 'last_name', 'license', 'email', 'guest_type', 'expired_date', )
+        fields = ('id', 'username', 'first_name', 'last_name', 'license', 'email', 'expired_date', )
         extra_kwargs = {'username': {'read_only': True}, 'password': {'read_only': True}}
 
 class SecuritySerializer(serializers.ModelSerializer):

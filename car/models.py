@@ -8,10 +8,10 @@ class Car(models.Model):
         return self.name
 
     guest = models.OneToOneField(Guest, on_delete=models.CASCADE, related_name='car', null=False)
-    name = models.CharField(max_length=20, null=False)
-    brand = models.CharField(max_length=20, null=False)
-    license_plate = models.CharField(max_length=20, null=False, default='')
-    color = models.CharField(max_length=20, null=False)
+    name = models.CharField(max_length=20, null=True)
+    brand = models.CharField(max_length=20, null=True)
+    license_plate = models.CharField(max_length=20, null=True, default='')
+    color = models.CharField(max_length=20, null=True)
     car_registration = models.ImageField(upload_to='car-registrations',null=True)
     @property
     def thumbnail_registration(self):

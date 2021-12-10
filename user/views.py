@@ -1,5 +1,5 @@
 from .models import Guest, Security, GuestType
-from car.models import Car
+from car.serialzers import CarSingleSerializer
 from .serializers import GuestSerializer, GuestSingleSerializer, SecuritySerializer, SecuritySingleSerializer, GuestTypeSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,12 +10,32 @@ from django.contrib.auth.hashers import make_password
 class Register(APIView):
     permission_classes = (AllowAny, )
     def post(self, request, format=None):
-        serializer = GuestSerializer(data=request.data)
-        if serializer.is_valid():
+        data_user = {
+            'username': request.data['username'],
+            'password': request.data['password'],
+            'email': request.data['email'],
+            'first_name': request.data['first_name'],
+            'last_name': request.data['last_name'],
+            'license': request.data['license'],
+        }
+        serializer_user = GuestSerializer(data=data_user)
+
+        data_car = {
+            'guest_id': serializer_user.id,
+            'brand': request.data['brand'],
+            'name': request.data['name'],
+            'color': request.data['color'],
+            'car_registration': request.data['car_registration'],
+            'license_plate': request.data['license_plate'],
+        }
+        serializer_car = CarSingleSerializer(data=data_car)
+
+        if serializer_user.is_valid() and serializer_car.is_valid():
             password = make_password(self.request.data['password'])
-            serializer.save(password=password, is_active=False)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer_user.save(password=password, is_active=False)
+            serializer_car.save()
+            return Response(serializer_user.data, status=status.HTTP_201_CREATED)
+        return Response(serializer_user.errors, status=status.HTTP_400_BAD_REQUEST)
 class GuestDetail(APIView):
     permission_classes = (AllowAny, )
     def get_object(self, username):

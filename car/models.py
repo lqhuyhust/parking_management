@@ -18,12 +18,5 @@ class Car(models.Model):
         if self.car_registration:
             return mark_safe('<img src="{}" />'.format(self.car_registration.url))
         return ""
-        
-    image = models.ImageField(upload_to='cars',null=True)
-    @property
-    def thumbnail_image(self):
-        if self.image:
-            return mark_safe('<img src="{}" />'.format(self.image.url))
-        return ""
     
     

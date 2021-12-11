@@ -5,7 +5,7 @@ from .serializers import CarParkSerializer, CarParkSingleSerializer, ParkingSlot
 from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.views import APIView
 from geopy.distance import geodesic
-from parking.models import Parking, Payment
+from parking.models import Parking
 from parking.serializers import ParkingSerializer
 
 # Create your views here.

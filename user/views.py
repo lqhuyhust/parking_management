@@ -1,5 +1,5 @@
 from .models import Guest, Security, GuestType
-from car.serialzers import CarSingleSerializer
+from car.serialzers import CarSerializer
 from .serializers import GuestSerializer, GuestSingleSerializer, SecuritySerializer, SecuritySingleSerializer, GuestTypeSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -20,21 +20,21 @@ class Register(APIView):
         }
         serializer_user = GuestSerializer(data=data_user)
 
-        data_car = {
-            'guest_id': serializer_user.id,
-            'brand': request.data['brand'],
-            'name': request.data['name'],
-            'color': request.data['color'],
-            'car_registration': request.data['car_registration'],
-            'license_plate': request.data['license_plate'],
-        }
-        serializer_car = CarSingleSerializer(data=data_car)
-
-        if serializer_user.is_valid() and serializer_car.is_valid():
+        if serializer_user.is_valid():
             password = make_password(self.request.data['password'])
-            serializer_user.save(password=password, is_active=False)
-            serializer_car.save()
-            return Response(serializer_user.data, status=status.HTTP_201_CREATED)
+            user = serializer_user.save(password=password, is_active=False)
+            data_car = {
+                'guest': user,
+                'brand': request.data['brand'],
+                'name': request.data['name'],
+                'color': request.data['color'],
+                'car_registration': request.data['car_registration'],
+                'license_plate': request.data['license_plate'],
+            }
+            serializer_car = CarSerializer(data=data_car)
+            if serializer_car.is_valid():
+                serializer_car.save()
+            return Response(serializer_car.data, status=status.HTTP_201_CREATED)
         return Response(serializer_user.errors, status=status.HTTP_400_BAD_REQUEST)
 class GuestDetail(APIView):
     permission_classes = (AllowAny, )

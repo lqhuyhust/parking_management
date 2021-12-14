@@ -19,7 +19,7 @@ class CarParkList(generics.ListAPIView):
     queryset = CarPark.objects.all()
     serializer_class = CarParkSerializer
 class CarParkDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAdminUser, )
+    permission_classes = (AllowAny, )
     queryset = CarPark.objects.all()
     serializer_class = CarParkSingleSerializer
 
@@ -55,7 +55,7 @@ class SearchCarPark(APIView):
         for car_park in serializer.data:
             coordinate = (float(car_park['longitude']), float(car_park['latitude']))
             car_park['distance'] = geodesic(target,coordinate).km
-            if car_park['distance'] < 3:
+            if car_park['distance'] < 2:
                 result.append(car_park)
         return Response(result, status=status.HTTP_200_OK)     
 

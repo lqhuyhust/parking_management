@@ -4,12 +4,12 @@ from .models import CarPark, ParkingSlot, Port
 class CarParkSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarPark
-        fields = ('name', 'location', 'longitude', 'latitude', )
+        fields = ('name', 'location', 'longitude', 'latitude', 'available_number')
 
 class CarParkSingleSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarPark
-        fields = ('name', 'location', 'longitude', 'latitude', )
+        fields = ('name', 'location', 'longitude', 'latitude', 'available_number')
     
     name = serializers.CharField(max_length=50, required=False)
     location = serializers.CharField(max_length=100, required=False)

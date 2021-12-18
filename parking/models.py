@@ -11,7 +11,6 @@ STATUS = [
 ]
 class Parking(models.Model):
     user = models.ForeignKey(Guest, related_name='parking', on_delete=models.CASCADE, null=False)
-    car = models.ForeignKey(Car, on_delete=models.CASCADE, null=False, default=1)
     car_park = models.ForeignKey(CarPark, on_delete=models.CASCADE, null=False)
     parking_slot = models.ForeignKey(ParkingSlot, on_delete=models.CASCADE, null=False)
     time_start = models.DateTimeField(null=True)

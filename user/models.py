@@ -8,7 +8,6 @@ class Guest(User):
     class Meta:
         verbose_name = 'Guest'
 
-    expired_date = models.DateField(null=True)
     date_of_birth = models.DateField(null=True)
     license = models.ImageField(upload_to='licenses', null=True)
 

@@ -16,7 +16,7 @@ class Register(APIView):
             'email': request.data['email'],
             'first_name': request.data['first_name'],
             'last_name': request.data['last_name'],
-            'license': request.data['license'],
+            'license': request.POST.get('license')
         }
         serializer_user = GuestSerializer(data=data_user)
 

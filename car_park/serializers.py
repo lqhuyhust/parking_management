@@ -4,7 +4,7 @@ from .models import CarPark, ParkingSlot
 class CarParkSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarPark
-        fields = ('name', 'location', 'longitude', 'latitude', 'available_number')
+        fields = ('id', 'name', 'location', 'longitude', 'latitude', 'available_number')
 
 class CarParkSingleSerializer(serializers.ModelSerializer):
     class Meta:

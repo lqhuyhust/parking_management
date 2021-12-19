@@ -11,7 +11,7 @@ class ParkingList(APIView):
     permission_classes = (AllowAny, )
     def get(self, request, *args, **kwargs):
         username = kwargs.get('username')
-        parkings = Guest.objects.get(username=username).parking.all().filter(status='Completed')
+        parkings = Guest.objects.get(username=username).parking.all()
         
         serializer = ParkingSerializer(parkings, many=True)
         return Response(serializer.data)

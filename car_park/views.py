@@ -62,16 +62,16 @@ class BookCarPark(APIView):
         try:
             return CarPark.objects.get(pk=pk)
         except CarPark.DoesNotExist:
-            return Response('Car Park Not Found', status=status.HTTP_404_NOT_FOUND)
+            return Response({'status': 404, 'message':'Car Park Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request, *args, **kwargs):
         if Parking.objects.filter(user_id=request.user.id, status__in=['Pending', 'Booked']):
-            return Response('You have to take only 1 car at same time', status=status.HTTP_400_BAD_REQUEST)
+            return Response({'status': 400, 'message':'You have to book only 1 car park at same time'}, status=status.HTTP_400_BAD_REQUEST)
         pk = kwargs.get('pk')
         
         available = ParkingSlot.objects.filter(car_park_id=pk, available=True).first()
         if not available:
-            return Response('There is no available parking slot!', status=status.HTTP_404_NOT_FOUND)
+            return Response({'status': 404, 'message':'There is no available parking slot!'}, status=status.HTTP_404_NOT_FOUND)
             
         new_parking = Parking(user=Guest.objects.get(pk=request.user.id), car_park=self.get_car_park(pk), parking_slot=available)
         new_parking.save()
@@ -82,6 +82,11 @@ class BookCarPark(APIView):
             "parking_slot": available.name
         }
 
+        response = {
+            'status': 201,
+            'data': data
+        }
+
         available.available = False
         available.save()
-        return Response(data, status=status.HTTP_201_CREATED)
+        return Response(response, status=status.HTTP_201_CREATED)

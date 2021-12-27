@@ -1,7 +1,6 @@
 from django.db import models
 from user.models import Guest
 from car_park.models import CarPark, ParkingSlot 
-from car.models import Car
 # Create your models here.
 
 STATUS = [

@@ -38,12 +38,20 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'core.apps.CoreConfig',
-    'car.apps.CarConfig',
+    'payment.apps.PaymentConfig',
     'car_park.apps.CarParkConfig',
     'parking.apps.ParkingConfig',
     'user.apps.UserConfig',
     'rest_framework',
+    'django_q'
 ]
+
+# Configure your Q cluster
+# More details https://django-q.readthedocs.io/en/latest/configure.html
+Q_CLUSTER = {
+    "name": "parking",
+    "orm": "default",  # Use Django's ORM + database for broker
+}
 
 MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',

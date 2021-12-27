@@ -1,4 +1,5 @@
 from rest_framework import generics, status
+from rest_framework import response
 from rest_framework.response import Response
 from user.models import Guest
 from .models import CarPark, ParkingSlot
@@ -7,9 +8,13 @@ from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.views import APIView
 from geopy.distance import geodesic
 from parking.models import Parking
-from parking.serializers import ParkingSerializer
+from django.db import transaction
 
-
+from django_q.models import Schedule
+import requests
+import json
+API_URL = 'http://localhost:9000/api/zones/'
+CAR_PARK_ID = 1
 # Create your views here.
 class CarParkCreate(generics.CreateAPIView):
     permission_classes = (IsAdminUser, )
@@ -90,3 +95,32 @@ class BookCarPark(APIView):
         available.available = False
         available.save()
         return Response(response, status=status.HTTP_201_CREATED)
+
+def get_data():
+    car_park = CarPark.objects.get(id=CAR_PARK_ID)
+    response_API = requests.get(API_URL)
+    available_slots = []
+    data = json.loads(response_API.text)
+    for zone in data:
+        zone['data'] = bin(zone['data'])[2:].zfill(zone['number'])
+        i = 1
+        with transaction.atomic():
+            for val in zone['data']:
+                floor = zone['floor']
+                name = zone['name']
+                name = f'F{floor}-{name}-{i}'
+                if(val == '0'):
+                    available = False
+                if(val == '1'):
+                    available = True
+                ParkingSlot.objects.filter(name=name, car_park=car_park).update(available=available)
+                
+                i = i + 1
+    print(data)
+
+
+Schedule.objects.create(
+    func='car_park.views.get_data',
+    minutes=0.5,
+    repeats=-1
+)

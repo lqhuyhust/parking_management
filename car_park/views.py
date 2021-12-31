@@ -1,12 +1,10 @@
 from rest_framework import generics, status
-from rest_framework import response
 from rest_framework.response import Response
 from user.models import Guest
 from .models import CarPark, ParkingSlot
 from .serializers import CarParkSerializer, CarParkSingleSerializer, ParkingSlotSerializer
 from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.views import APIView
-from geopy.distance import geodesic
 from parking.models import Parking
 from django.db import transaction
 
@@ -42,24 +40,7 @@ class ParkingSlotList(generics.ListCreateAPIView):
         except ParkingSlot.DoesNotExist:
             return Response('Not Found', status=status.HTTP_404_NOT_FOUND)
         serializer = ParkingSlotSerializer(parking_slots, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)  
-
-
-class SearchCarPark(APIView):
-    permission_classes = (AllowAny, )
-    def get(self, request, *args, **kwargs):
-        longitude = self.request.query_params.get('long')
-        latitude = self.request.query_params.get('lat')
-        target = (float(longitude), float(latitude))
-        car_parks = CarPark.objects.all()
-        serializer = CarParkSerializer(car_parks, many=True)
-        result = []
-        for car_park in serializer.data:
-            coordinate = (float(car_park['longitude']), float(car_park['latitude']))
-            car_park['distance'] = geodesic(target,coordinate).km
-            if car_park['distance'] < 2:
-                result.append(car_park)
-        return Response(result, status=status.HTTP_200_OK)     
+        return Response(serializer.data, status=status.HTTP_200_OK)   
 
 class BookCarPark(APIView):
     # permission_classes = (AllowAny, )

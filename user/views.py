@@ -14,14 +14,13 @@ class Register(APIView):
             'password': request.data['password'],
             'email': request.data['email'],
             'first_name': request.data['first_name'],
-            'last_name': request.data['last_name'],
-            'license': request.POST.get('license')
+            'last_name': request.data['last_name']
         }
         serializer_user = GuestSerializer(data=data_user)
 
         if serializer_user.is_valid():
             password = make_password(self.request.data['password'])
-            user = serializer_user.save(password=password, is_active=False)
+            user = serializer_user.save(password=password, is_active=True)
             return Response(serializer_user.data, status=status.HTTP_201_CREATED)
         return Response(serializer_user.errors, status=status.HTTP_400_BAD_REQUEST)
 class GuestDetail(APIView):

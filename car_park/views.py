@@ -93,6 +93,9 @@ def get_data():
                 if(val == '0'):
                     available = False
                 if(val == '1'):
+                    slot =  ParkingSlot.objects.get(name=name, car_park=car_park)
+                    if Parking.objects.get(car_park=car_park, parking_slot=slot, status='Booked'):
+                        available = False
                     available = True
                 ParkingSlot.objects.filter(name=name, car_park=car_park).update(available=available)
                 

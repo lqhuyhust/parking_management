@@ -8,12 +8,4 @@ class Guest(User):
     class Meta:
         verbose_name = 'Guest'
 
-    date_of_birth = models.DateField(null=True)
-    license = models.ImageField(upload_to='licenses', null=True)
-
-    @property
-    def thumbnail_license(self):
-        if self.license:
-            return mark_safe('<img src="{}" />'.format(self.license.url))
-        return ""
-
+    phone = models.CharField(null=True, max_length=12)

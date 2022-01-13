@@ -40,21 +40,14 @@ class Checkout(APIView):
         pk = kwargs.get('pk')
         car_park = CarPark.objects.get(pk=pk)
 
-        time = int(((time_end - time_start).total_seconds())/1800)
+        time = int(((time_end - time_start).total_seconds())/1800) + 1
         fee = int(FEE) * int(time)
 
-        try:
-            parkings = Parking.objects.filter(user_id=request.user.id, status__in=['Pending', 'Booked'])
-            for parking in parkings:
-                if (parking.time_start<time_start and time_start<parking.time_end) or (parking.time_start<time_end and time_end<parking.time_end):
-                    return Response({'status': 400, 'message':'You have to book only 1 car park at same time'}, status=status.HTTP_400_BAD_REQUEST)
-        except Parking.DoesNotExist:
-            pass
+        if Parking.objects.filter(user_id=request.user.id, status__in=['Pending', 'Booked']):
+            return Response({'status': 400, 'message':'You have to book only 1 car park at same time'}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
             available = ParkingSlot.objects.filter(car_park_id=pk, available=True).first()
-            if Parking.objects.filter(parking_slot=available, status__in=['Pending', 'Booked'], time_start__lte=time_start, time_end__gte=time_start) or Parking.objects.filter(parking_slot=available, status__in=['Pending', 'Booked'], time_start__lte=time_end, time_end__gte=time_end):
-                return Response({'status': 400, 'message':'There is no available parking slot!'}, status=status.HTTP_400_BAD_REQUEST)
         except ParkingSlot.DoesNotExist:
             return Response({'status': 404, 'message':'There is no available parking slot!'}, status=status.HTTP_404_NOT_FOUND)
 

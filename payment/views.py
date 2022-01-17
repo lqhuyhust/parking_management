@@ -44,12 +44,12 @@ class Checkout(APIView):
         fee = int(FEE) * int(time)
 
         if Parking.objects.filter(user_id=request.user.id, status__in=['Pending', 'Booked']):
-            return Response({'status': 400, 'message':'You have to book only 1 car park at same time'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'code': 1, 'message':'You have to book only 1 car park at same time'})
         
         try:
             available = ParkingSlot.objects.filter(car_park_id=pk, available=True).first()
         except ParkingSlot.DoesNotExist:
-            return Response({'status': 404, 'message':'There is no available parking slot!'}, status=status.HTTP_404_NOT_FOUND)
+            return JsonResponse({'code': 2, 'message':'There is no available parking slot!'})
 
         customer = stripe.Customer.create(
             email = request.user.email,
@@ -98,6 +98,7 @@ class Checkout(APIView):
         qr_offset.close()
 
         return JsonResponse({
+            'code': 3,
             'session_id' : session.id,
             'stripe_public_key' : settings.STRIPE_PUBLIC_KEY
         })

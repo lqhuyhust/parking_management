@@ -14,24 +14,28 @@ import datetime
 from io import BytesIO
 from django.core.files import File
 from PIL import Image, ImageDraw
+from parking.serializers import ParkingSerializer
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 FEE = 10000
 data = {}
 
-def success(request):
-    parking = Parking.objects.get(user_id=request.user.id, status='Pending')
-    parking.status = 'Booked'
-    parking.save()
+class Success(APIView):
+    def get(self, request, *args, **kwargs):
+        parking = Parking.objects.get(user_id=request.user.id, status='Pending')
+        parking.status = 'Booked'
+        parking.save()
 
-    return JsonResponse(json.loads(parking))
+        serializer = ParkingSerializer(parking)
+        return Response(serializer.data)
 
-def failure(request):
-    parking = Parking.objects.get(user_id=request.user.id, status='Pending')
-    parking.delete()
-    return JsonResponse({
-        'message': 'Payment Fail'
-    })
+class Failure(APIView):
+    def get(self, request, *args, **kwargs):
+        parking = Parking.objects.get(user_id=request.user.id, status='Pending')
+        parking.delete()
+        return JsonResponse({
+            'message': 'Payment Fail'
+        })
 
 class Checkout(APIView):
     def post(self, request, *args, **kwargs):
@@ -95,6 +99,7 @@ class Checkout(APIView):
         stream = BytesIO()
         qr_offset.save(stream, 'PNG')
         new_parking.qr_code.save(files_name, File(stream), save=True)
+        new_parking.qr_code_url = 'qrcode/' + str(files_name)
         qr_offset.close()
 
         return JsonResponse({

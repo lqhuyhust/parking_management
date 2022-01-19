@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="text-center">
+            <h2>Successful booking! Below is the order information</h2>
+            <!-- <div>
+                <img width="100" src="http://localhost:8000/media/icon/check.png" alt="">
+            </div> -->
+        </div>
+        <div>
+            <div>
+                <strong>Id</strong>
+                <p>{{ parking.id }}</p>
+            </div>
+            <div>
+                <strong>Car park</strong>
+                <p>{{ parking.car_park }}</p>
+            </div>
+            <div>
+                <strong>Slot</strong>
+                <p>{{ parking.parking_slot }}</p>
+            </div>
+            <div>
+                <strong>From</strong>
+                <p>{{ parking.time_start }}</p>
+            </div>
+            <div>
+                <strong>To</strong>
+                <p>{{ parking.time_end }}</p>
+            </div>
+            <div>
+                <strong>Fee</strong>
+                <p>{{ parking.fee }}</p>
+            </div>
+            <div>
+                <strong>QR Code</strong>
+                <p><img src="http://localhost:8000/media/{{ parking.qr_code }}"></p>
+            </div>
+        </div>
+
+    </div>>
+</body>
+
+</html>

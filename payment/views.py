@@ -15,23 +15,32 @@ from io import BytesIO
 from django.core.files import File
 from PIL import Image, ImageDraw
 from parking.serializers import ParkingSerializer
+from rest_framework.permissions import IsAdminUser, AllowAny
+from django.shortcuts import render
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 FEE = 10000
 data = {}
 
 class Success(APIView):
+    permission_classes = (AllowAny, )
     def get(self, request, *args, **kwargs):
-        parking = Parking.objects.get(user_id=request.user.id, status='Pending')
+        pk = kwargs.get('pk')
+        parking = Parking.objects.get(id=pk)
         parking.status = 'Booked'
         parking.save()
 
         serializer = ParkingSerializer(parking)
-        return Response(serializer.data)
+        context = {
+            'parking': parking
+        }
+        return render(request, 'success.html', context)
 
 class Failure(APIView):
+    permission_classes = (AllowAny, )
     def get(self, request, *args, **kwargs):
-        parking = Parking.objects.get(user_id=request.user.id, status='Pending')
+        pk = kwargs.get('pk')
+        parking = Parking.objects.get(id=pk)
         parking.delete()
         return JsonResponse({
             'message': 'Payment Fail'
@@ -60,18 +69,6 @@ class Checkout(APIView):
             name = request.user.first_name + ' ' + request.user.last_name
         )
 
-        session = stripe.checkout.Session.create(
-            customer = customer,
-            payment_method_types=['card'],
-            line_items=[{
-                'price': 'price_1KErBsLr4TsqrFknlwInjiuF',
-                'quantity': time,
-            }],
-            mode='payment',
-            success_url=request.build_absolute_uri(reverse('success')),
-            cancel_url=request.build_absolute_uri(reverse('failure')),
-        )
-
         new_parking = Parking(
             user=Guest.objects.get(pk=request.user.id), 
             car_park=car_park, 
@@ -82,6 +79,18 @@ class Checkout(APIView):
             fee = fee
         )
         new_parking.save()
+
+        session = stripe.checkout.Session.create(
+            customer = customer,
+            payment_method_types=['card'],
+            line_items=[{
+                'price': 'price_1KErBsLr4TsqrFknlwInjiuF',
+                'quantity': time,
+            }],
+            mode='payment',
+            success_url=request.build_absolute_uri(reverse('success') + '/' + str(new_parking.id)) ,
+            cancel_url=request.build_absolute_uri(reverse('failure') + '/' + str(new_parking.id)),
+        )
         
         data = {
             'Id': new_parking.id,

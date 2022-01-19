@@ -86,8 +86,8 @@ class Checkout(APIView):
                 'quantity': time,
             }],
             mode='payment',
-            success_url=request.build_absolute_uri(reverse('success') + '/' + str(new_parking.id)) ,
-            cancel_url=request.build_absolute_uri(reverse('failure') + '/' + str(new_parking.id)),
+            success_url=request.build_absolute_uri(reverse('success', kwargs={'pk':str(new_parking.id)})),
+            cancel_url=request.build_absolute_uri(reverse('failure', kwargs={'pk':str(new_parking.id)})),
         )
         
         data = {

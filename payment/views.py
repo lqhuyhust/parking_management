@@ -54,9 +54,15 @@ class Checkout(APIView):
         time = int(((time_end - time_start).total_seconds())/1800) + 1
         fee = int(FEE) * int(time)
 
-        if Parking.objects.filter(user_id=request.user.id, status__in=['Pending', 'Booked']):
+        if Parking.objects.filter(user_id=request.user.id, status='Booked'):
             return JsonResponse({'code': 1, 'message':'You have to book only 1 car park at same time'})
         
+        try:
+            parking = Parking.objects.filter(user_id=request.user.id, status='Pending')
+            parking.delete()
+        except Parking.DoesNotExist:
+            pass
+
         try:
             available = ParkingSlot.objects.filter(car_park_id=pk, available=True).first()
         except ParkingSlot.DoesNotExist:

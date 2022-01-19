@@ -30,7 +30,6 @@ class Success(APIView):
         parking.status = 'Booked'
         parking.save()
 
-        serializer = ParkingSerializer(parking)
         context = {
             'parking': parking
         }
@@ -42,9 +41,8 @@ class Failure(APIView):
         pk = kwargs.get('pk')
         parking = Parking.objects.get(id=pk)
         parking.delete()
-        return JsonResponse({
-            'message': 'Payment Fail'
-        })
+        
+        return render(request, 'failure.html')
 
 class Checkout(APIView):
     def post(self, request, *args, **kwargs):
